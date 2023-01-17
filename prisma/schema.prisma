@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity", "fieldReference"]
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+ 
+//enum Permissions {
+   // DEFAULT
+  //  VERIFICATIONS
+  //  PAYMENT
+  //  APPROVAL
+//}
+
+model Admin {
+  id  String @id @default(cuid())
+  name String 
+  email String @unique
+  avatar String?  
+  password String 
+  permission  Json 
+  createdAt  DateTime @default(now())
+
+  @@index([email])
+}
+
+enum Status {
+  DISBURSED 
+  APPROVED
+  DECLINED
+  CLOSED
+  BLOCKED
+  PENDING
+}
+model Application {
+  id String @id @default(cuid())
+  amount Decimal @db.Decimal(7, 2)
+  period Int 
+  interest Decimal @db.Decimal(7, 2)
+  service_fee Decimal @db.Decimal(7, 2)
+  total_amount Decimal @db.Decimal(7, 2)
+
+  application_status Status @default(PENDING)
+
+  payment_status  PaymentStatus @default(DEFAULT)
+  approved_by String? 
+  approved_on DateTime? 
+  disbursed_date DateTime? @default(now())
+  repayment_date DateTime? @default(now())
+  remarks String?  @db.VarChar(500)
+  selfie_img  String
+  owner   User @relation(fields: [userId], references: [id])
+  userId  String
+  payments Repayment[]
+  createdAt DateTime @default(now())
+  //if todays date > repayment date do the calc and set the amount
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, application_status, payment_status])
+}
+
+enum PaymentStatus {
+  PAID 
+  OWEING
+  DEFAULT
+}
+
+model Repayment {
+  id String @id @default(cuid())
+ amount Decimal @db.Decimal(7, 2)
+  createdAt  DateTime @default(now())
+  payee User  @relation(fields: [userId], references: [id])
+ userId  String
+  application Application @relation(fields: [loanId], references: [id])
+  loanId String
+  //one to many relationship 
+  @@index([userId, loanId])
+}
+
+model User {
+   id String @id @default(cuid())
+   first_name String 
+   last_name  String 
+   personal_phone1 String 
+   personal_phone2 String
+   email String @unique 
+   otp   Int
+   dob  DateTime 
+   gender String 
+   ghcard_img String 
+   
+   ghcard_number String
+   marital_status String
+   education String
+   residential_address String
+   religion String
+   city   String
+   area   String
+   landmark  String
+   company_name  String 
+   company_phone  String
+   company_location String
+   company_city String 
+   company_landmark  String
+   monthly_income  String  
+   designation   String
+   fm1_fullname  String
+  fm1_phonenumber   String
+  fmm1_relationship   String
+  fmm2_fullname      String
+  fmm2_phone_number   String
+  fmm2_relationship   String
+  co_worker_fullname  String
+  co_worker_phone     String
+  co_worker_relationship  String
+  wallet_network        String    // options  AIR VOD MTN 
+  wallet_name           String
+  wallet_number          String
+  disbursments    Repayment[]
+  createdAt  DateTime   @default(now())
+  loans Application[]
+
+  @@index([personal_phone1, personal_phone2])
+}

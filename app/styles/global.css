@@ -1,0 +1,27 @@
+@font-face {
+  font-family: Inter-ExtraLight;
+  src: url("/fonts/Inter-ExtraLight.otf");
+  format: ("otf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter-Regular;
+  src: url("/fonts/Inter-Regular.otf");
+  format: ("otf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter-Thin;
+  src: url("/fonts/Inter-Thin.otf");
+  format: ("otf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter-Bold;
+  src: url("/fonts/Inter-Bold.otf");
+  format: ("otf");
+  font-display: swap;
+}
